@@ -23,7 +23,7 @@ $(function() {
          */
         it('are defined', function() {
             expect(allFeeds).toBeDefined();
-            expect(allFeeds.length).not.toBe(0);
+            expect(allFeeds.length).toBeGreaterThan(0);
         });
 
 
@@ -31,13 +31,13 @@ $(function() {
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
-         it('all has URL',function(){
-            allFeeds.forEach(function(element){
+        it('all has URL',function(){
+            allFeeds.forEach(function(feed){
                 //url is defined
-                expect(element.url).toBeDefined();
+                expect(feed.url).toBeDefined();
                 //url length is more than 0
-                expect(element.url.length > 0).toBe(true);
-            })
+                expect(feed.url.length).toBeGreaterThan(0);
+            });
          });
 
 
@@ -45,14 +45,14 @@ $(function() {
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
-         it('all has name',function(){
+        it('all has name',function(){
             allFeeds.forEach(function(element){
                 //name is defined
                 expect(element.name).toBeDefined();
                 //name length is more than 0
-                expect(element.name.length > 0).toBe(true);
-            })
-         });
+                expect(element.name.length).toBeGreaterThan(0);
+            });
+        });
     });
 
 
@@ -66,7 +66,7 @@ $(function() {
         //'menu-hidden' class is not added to body
         it('to be hidden at first',function(){
             expect($('body')).toHaveClass('menu-hidden');
-         });
+        });
          /* a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
           * should have two expectations: does the menu display when
@@ -80,10 +80,10 @@ $(function() {
             $('.menu-icon-link').click();
             expect($('body')).toHaveClass('menu-hidden');
 
-         });
+        });
     });
     /*  a test suite named "Initial Entries" */
-     describe('Inital Entries',function(){
+    describe('Inital Entries',function(){
         /* a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
@@ -95,41 +95,45 @@ $(function() {
         });
 
         it('loadFeed asynchronous call has entry',function(){
-            expect($('.feed .entry').length > 0).toBe(true);
+            expect($('.feed .entry').length).toBeGreaterThan(0);
         });
     });
     /* a test suite named "New Feed Selection" */
-        describe('New Feed Selection',function(){
-        /* a test that ensures when a new feed is loaded
-         * by the loadFeed function that the content actually changes.
-         * Remember, loadFeed() is asynchronous.
-         */
-         var currentFeed;
+    /* a test that ensures when a new feed is loaded
+     * by the loadFeed function that the content actually changes.
+     * Remember, loadFeed() is asynchronous.
+     */
+    describe('New Feed Selection',function(){
+
+        var currentFeed;
          // also compare feed length, in case current and later
-         // length are all 0;
-         var currentFeedLen;
-         beforeEach(function(done){
-            loadFeed(1,done);
+         // length are all 0(failed to load anything);
+        var currentFeedLen;
+        beforeEach(function(done){
+            loadFeed(1,function(){
             currentFeed = $('.feed').html();
             currentFeedLen = $('.feed .entry').length;
-         });
+            done();
+            });
+        });
 
-         it('change happends when feed 0 is loaded',function(done){
-            loadFeed(0,done);
-            expect(currentFeedLen > 0).toBe(true);
-            expect($('.feed .entry').length > 0).toBe(true);
-            expect($('.feed').html()).not.toEqual(currentFeed);
-         });
+        it('change happends when feed 0 is loaded',function(done){
+            loadFeed(0,function(){
+                expect(currentFeedLen).toBeGreaterThan(0);
+                expect($('.feed .entry').length).toBeGreaterThan(0);
+                expect($('.feed').html()).not.toEqual(currentFeed);
+                done();
+            });
+        });
 
         it('change happends when feed 2 is loaded',function(done){
-            loadFeed(2,done);
-            expect($('.feed .entry').length > 0).toBe(true);
-            expect($('.feed').html()).not.toEqual(currentFeed);
-         });
-        it('change happends when feed 3 is loaded',function(done){
-            loadFeed(3,done);
-            expect($('.feed .entry').length > 0).toBe(true);
-            expect($('.feed').html()).not.toEqual(currentFeed);
-         });
+            loadFeed(2,function(){
+                expect(currentFeedLen).toBeGreaterThan(0);
+                expect($('.feed .entry').length).toBeGreaterThan(0);
+                expect($('.feed').html()).not.toEqual(currentFeed);
+                done();
+            });
+        });
+
     });
 }());
